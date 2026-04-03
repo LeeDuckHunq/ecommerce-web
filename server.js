@@ -9,13 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 // ===== KẾT NỐI DB =====
-const db = mysql.createConnection({
-  host: 'mysql.railway.internal',
-  user: 'root',
-  password: 'JSgGADhVzFuoKANTvBwTyrqUpXQSExmm',
-  database: 'railway',
-  port: 3306
-});
+const mysql = require('mysql2');
+const connectionString = 'mysql://root:JSgGADhVzFuoKANTvBwTyrqUpXQSExmm@maglev.proxy.rlwy.net:39709/railway';
+
+const db = mysql.createConnection(connectionString);
 
 db.connect(err => {
   if (err) {
