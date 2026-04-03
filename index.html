@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shop</title>
+  <title>M.Shop</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
     :root {
       --bg: #f5f4f0;
       --surface: #ffffff;
@@ -16,24 +16,22 @@
       --border-md: rgba(0,0,0,0.13);
       --text: #1a1a1a;
       --muted: #888880;
+      --purple: #6c47ff;
+      --purple-bg: #f0eeff;
+      --purple-border: rgba(108,71,255,0.2);
       --green: #2a7a4f;
       --green-bg: #eaf4ee;
       --green-border: rgba(42,122,79,0.2);
-      --red: #c0392b;
-      --red-bg: #fdecea;
-      --red-border: rgba(192,57,43,0.2);
-      --yellow: #8a6400;
-      --yellow-bg: #fef8e6;
-      --yellow-border: rgba(138,100,0,0.2);
     }
- 
+
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
     }
- 
+
+    /* ── Header ── */
     header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 40px; height: 56px;
@@ -46,124 +44,214 @@
       font-weight: 800; font-size: 1.1rem; letter-spacing: -0.04em;
       color: var(--text); text-decoration: none;
     }
-    .logo span { color: #6c47ff; }
-    .admin-badge {
-      display: flex; align-items: center; gap: 5px;
-      padding: 4px 12px;
-      background: #f0eeff;
-      border: 1px solid rgba(108,71,255,0.2);
-      border-radius: 99px;
-      color: #6c47ff;
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.08em; text-transform: uppercase;
-    }
-    .dot {
-      width: 5px; height: 5px; border-radius: 50%; background: #6c47ff;
-      animation: pulse 2s ease infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
- 
-    .page { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
- 
-    .hero-label {
-      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
-    }
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1;
-      margin-bottom: 24px; color: var(--text);
-    }
- 
-    .stats { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
-    .stat {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 18px; min-width: 100px;
-      animation: fadeUp 0.4s ease both;
-    }
-    .stat:nth-child(1){animation-delay:0.05s}
-    .stat:nth-child(2){animation-delay:0.10s}
-    .stat:nth-child(3){animation-delay:0.15s}
-    .stat-value {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text);
-    }
-    .stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
- 
-    .filters { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-    .filter-btn {
-      padding: 5px 14px;
-      background: var(--surface);
+    .logo span { color: var(--purple); }
+
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .cart-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 13px;
+      background: transparent;
       border: 1px solid var(--border);
       border-radius: 99px;
       color: var(--muted);
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.76rem; font-weight: 500;
+      font-size: 0.78rem; font-weight: 500;
+      text-decoration: none;
       cursor: pointer; transition: all 0.15s;
     }
-    .filter-btn:hover { color: var(--text); border-color: var(--border-md); }
-    .filter-btn.active { background: #1a1a1a; border-color: #1a1a1a; color: #ffffff; }
- 
-    #orders { display: flex; flex-direction: column; gap: 8px; }
- 
-    .order-row {
-      display: flex; align-items: center; gap: 14px;
+    .cart-btn:hover { color: var(--text); border-color: var(--border-md); background: var(--surface2); }
+    .logout-btn {
+      padding: 5px 13px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .logout-btn:hover { color: var(--text); border-color: var(--border-md); background: var(--surface2); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 900px; margin: 0 auto;
+      padding: 52px 40px 36px;
+    }
+    .hero-label {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+      margin-bottom: 12px; color: var(--text);
+    }
+    h1 em { font-style: italic; color: var(--purple); }
+    .hero-sub {
+      font-size: 0.92rem; color: var(--muted); font-weight: 400; max-width: 340px;
+    }
+
+    mark {
+      background: var(--purple-bg);
+      color: var(--purple);
+      border-radius: 3px;
+      padding: 0 1px;
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 40px 20px;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 10px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 18px;
-      animation: fadeUp 0.45s ease both;
+      padding: 0 16px;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .order-row:hover { border-color: var(--border-md); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .order-row:nth-child(1){animation-delay:0.05s}
-    .order-row:nth-child(2){animation-delay:0.10s}
-    .order-row:nth-child(3){animation-delay:0.15s}
-    .order-row:nth-child(4){animation-delay:0.20s}
-    .order-row:nth-child(5){animation-delay:0.25s}
- 
-    .order-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.75rem; font-weight: 700;
-      color: var(--muted); letter-spacing: 0.04em; min-width: 46px;
+    .search-box:focus-within {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px var(--purple-border);
     }
-    .order-info { flex: 1; min-width: 0; }
-    .order-id {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.88rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
-    }
-    .order-meta { font-size: 0.73rem; color: var(--muted); margin-top: 2px; }
- 
-    .status-badge {
-      padding: 3px 10px; border-radius: 99px;
-      font-size: 0.68rem; font-weight: 600;
-      letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
-    }
-    .status-badge.pending  { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
-    .status-badge.approved { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-border); }
-    .status-badge.rejected { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red-border); }
- 
-    .actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .action-btn {
-      padding: 6px 12px; border-radius: 7px;
+    .search-icon { font-size: 0.9rem; color: var(--muted); flex-shrink: 0; }
+    .search-input {
+      flex: 1; height: 44px;
+      background: transparent; border: none; outline: none;
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.76rem; font-weight: 500;
-      cursor: pointer; transition: all 0.15s; border: 1px solid;
+      font-size: 0.88rem; color: var(--text);
     }
-    .btn-approve { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
-    .btn-approve:hover { background: var(--green); color: #fff; border-color: var(--green); }
-    .btn-reject  { background: var(--red-bg);   border-color: var(--red-border);   color: var(--red); }
-    .btn-reject:hover  { background: var(--red);  color: #fff; border-color: var(--red); }
-    .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .action-btn:active:not(:disabled) { transform: scale(0.96); }
- 
-    .empty { text-align: center; padding: 80px 20px; animation: fadeUp 0.5s ease; }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-    .empty h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .empty p { color: var(--muted); font-size: 0.83rem; }
- 
+    .search-input::placeholder { color: var(--muted); }
+    .search-clear {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1rem; padding: 4px;
+      border-radius: 50%; transition: color 0.15s, background 0.15s;
+      display: none; line-height: 1;
+    }
+    .search-clear:hover { color: var(--text); background: var(--surface2); }
+    .search-count {
+      font-size: 0.75rem; color: var(--muted); margin-top: 10px;
+      min-height: 18px;
+    }
+
+    /* ── No results ── */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center; padding: 60px 20px;
+      animation: fadeUp 0.3s ease;
+    }
+    .no-results-icon { font-size: 2rem; margin-bottom: 10px; }
+    .no-results h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; margin-bottom: 4px;
+    }
+    .no-results p { color: var(--muted); font-size: 0.82rem; }
+
+    /* ── Product grid ── */
+    .grid-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+    #list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    /* ── Product card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 18px 18px;
+      display: flex; flex-direction: column; gap: 8px;
+      animation: fadeUp 0.45s ease both;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    }
+    .card:hover {
+      border-color: var(--border-md);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      transform: translateY(-2px);
+    }
+    .card:nth-child(1){animation-delay:0.04s}
+    .card:nth-child(2){animation-delay:0.08s}
+    .card:nth-child(3){animation-delay:0.12s}
+    .card:nth-child(4){animation-delay:0.16s}
+    .card:nth-child(5){animation-delay:0.20s}
+    .card:nth-child(6){animation-delay:0.24s}
+
+    .card-tag {
+      display: inline-flex; align-self: flex-start;
+      padding: 2px 8px; border-radius: 99px;
+      background: var(--surface2);
+      font-size: 0.62rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card-icon {
+      font-size: 2rem; line-height: 1;
+      margin: 6px 0 2px;
+    }
+    .card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 700; letter-spacing: -0.02em;
+      color: var(--text); line-height: 1.3;
+      flex: 1;
+    }
+    .card-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 800; letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .card-price span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem; font-weight: 500;
+      color: var(--muted); margin-left: 3px;
+    }
+
+    /* ── Add to cart button ── */
+    .add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-top: 4px; padding: 9px;
+      background: #1a1a1a; color: #ffffff;
+      border: none; border-radius: 9px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500;
+      cursor: pointer; transition: background 0.15s, transform 0.12s;
+    }
+    .add-btn:hover:not(:disabled) { background: #333; }
+    .add-btn:active:not(:disabled) { transform: scale(0.97); }
+    .add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .add-btn.added {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+    }
+
+    /* ── Skeleton ── */
+    .skeleton {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 18px 18px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .skel {
+      background: linear-gradient(90deg, #ececec 25%, #f5f5f5 50%, #ececec 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+    .skel-icon { width: 40px; height: 40px; border-radius: 10px; }
+    .skel-line { height: 13px; }
+    .skel-btn  { height: 36px; border-radius: 9px; margin-top: 4px; }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Toast ── */
     .toast-wrap {
       position: fixed; bottom: 24px; right: 24px;
       display: flex; flex-direction: column; gap: 6px; z-index: 999;
@@ -175,28 +263,29 @@
       animation: toastIn 0.3s ease;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
-    .toast.error { background: var(--red); }
- 
-    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .toast-icon { font-size: 0.85rem; }
+
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     @keyframes toastIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)} }
- 
+
     @media (max-width: 600px) {
       header { padding: 0 20px; }
-      .page  { padding: 28px 20px 60px; }
-      .actions { flex-direction: column; }
+      .hero, .search-wrap, .grid-wrap { padding-left: 20px; padding-right: 20px; }
+      h1 { font-size: 2.1rem; }
+      #list { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">M<span>.</span>Shop</div>
-    <div style="display: flex; gap: 20px;">
-      <a href="cart.html" class="cart-btn">🛒 Giỏ hàng</a>
-      <a href="orders.html" class="cart-btn">Orders</a>
-      <button onclick="logout()" class="cart-btn">Đăng xuất</button>
-    </div>
-  </header>
+<header>
+  <div class="logo">M<span>.</span>Shop</div>
+  <div class="nav-links">
+    <a href="cart.html" class="cart-btn">🛒 Giỏ hàng</a>
+    <a href="orders.html" class="cart-btn">Orders</a>
+    <button onclick="logout()" class="logout-btn">Đăng xuất</button>
+  </div>
+</header>
 
 <section class="hero">
   <div class="hero-label">Cửa hàng trực tuyến</div>
@@ -204,9 +293,24 @@
   <p class="hero-sub">Khám phá các sản phẩm chất lượng với giá tốt nhất.</p>
 </section>
 
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input
+      class="search-input"
+      id="searchInput"
+      type="text"
+      placeholder="Tìm kiếm sản phẩm…"
+      oninput="handleSearch(this.value)"
+      autocomplete="off"
+    />
+    <button class="search-clear" id="searchClear" onclick="clearSearch()" title="Xóa">✕</button>
+  </div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
 <div class="grid-wrap">
   <div id="list">
-    <!-- skeletons while loading -->
     <div class="skeleton"><div class="skel skel-icon"></div><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line" style="width:40%"></div><div class="skel skel-btn"></div></div>
     <div class="skeleton"><div class="skel skel-icon"></div><div class="skel skel-line" style="width:70%"></div><div class="skel skel-line" style="width:35%"></div><div class="skel skel-btn"></div></div>
     <div class="skeleton"><div class="skel skel-icon"></div><div class="skel skel-line" style="width:55%"></div><div class="skel skel-line" style="width:45%"></div><div class="skel skel-btn"></div></div>
@@ -217,15 +321,16 @@
 
 <script>
   function logout() {
-  localStorage.removeItem('user');
-  window.location = 'login.html';
+    localStorage.removeItem('user');
+    window.location = 'login.html';
   }
+
   const ICONS = ['📦','🛍️','🎁','⭐','💎','🔥','✨','🎯'];
 
   const user = JSON.parse(localStorage.getItem('user'));
   if (!user) {
     alert("Bạn chưa đăng nhập!");
-    window.location = "login.html";
+    window.location = 'login.html';
   }
 
   function showToast(msg) {
@@ -241,25 +346,71 @@
     return Number(n).toLocaleString('vi-VN');
   }
 
+  let allProducts = [];
+
+  function renderProducts(products) {
+    const list = document.getElementById('list');
+    const count = document.getElementById('searchCount');
+    const query = document.getElementById('searchInput').value.trim();
+
+    if (!products.length) {
+      list.innerHTML = `
+        <div class="no-results">
+          <div class="no-results-icon">🔍</div>
+          <h3>Không tìm thấy sản phẩm</h3>
+          <p>Thử tìm với từ khóa khác.</p>
+        </div>`;
+      count.textContent = 'Không có kết quả';
+      return;
+    }
+
+    let html = '';
+    products.forEach((p, i) => {
+      const icon = ICONS[allProducts.indexOf(p) % ICONS.length];
+      const name = query
+        ? p.name.replace(new RegExp(`(${query})`, 'gi'), '<mark>$1</mark>')
+        : p.name;
+      html += `
+        <div class="card">
+          <div class="card-tag">Sản phẩm</div>
+          <div class="card-icon">${icon}</div>
+          <div class="card-name">${name}</div>
+          <div class="card-price">${formatPrice(p.price)}<span>VND</span></div>
+          <button class="add-btn" id="btn-${p.id}" onclick="add(${p.id}, this)">
+            <span>＋</span> Thêm vào giỏ
+          </button>
+        </div>
+      `;
+    });
+    list.innerHTML = html;
+
+    count.textContent = query
+      ? `${products.length} kết quả cho "${query}"`
+      : `${products.length} sản phẩm`;
+  }
+
+  function handleSearch(val) {
+    const clear = document.getElementById('searchClear');
+    clear.style.display = val ? 'block' : 'none';
+    const q = val.trim().toLowerCase();
+    const filtered = q
+      ? allProducts.filter(p => p.name.toLowerCase().includes(q))
+      : allProducts;
+    renderProducts(filtered);
+  }
+
+  function clearSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    input.focus();
+    handleSearch('');
+  }
+
   fetch('https://ecommerce-web-production-3aa3.up.railway.app/products')
     .then(res => res.json())
     .then(data => {
-      let html = '';
-      data.forEach((p, i) => {
-        const icon = ICONS[i % ICONS.length];
-        html += `
-          <div class="card">
-            <div class="card-tag">Sản phẩm</div>
-            <div class="card-icon">${icon}</div>
-            <div class="card-name">${p.name}</div>
-            <div class="card-price">${formatPrice(p.price)}<span>VND</span></div>
-            <button class="add-btn" id="btn-${p.id}" onclick="add(${p.id}, this)">
-              <span>＋</span> Thêm vào giỏ
-            </button>
-          </div>
-        `;
-      });
-      document.getElementById('list').innerHTML = html;
+      allProducts = data;
+      renderProducts(data);
     })
     .catch(() => {
       document.getElementById('list').innerHTML =
