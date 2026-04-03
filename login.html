@@ -228,6 +228,11 @@
 </div>
 
 <script>
+  const existingUser = JSON.parse(localStorage.getItem('user'));
+  if (existingUser) {
+    window.location = existingUser.role === 'admin' ? 'admin.html' : 'index.html';
+  }
+
   function togglePw(btn) {
     const input = document.getElementById('password');
     const isHidden = input.type === 'password';
