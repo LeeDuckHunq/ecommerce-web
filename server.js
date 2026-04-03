@@ -9,7 +9,6 @@ app.use(cors());
 app.use(express.json());
 
 // ===== KẾT NỐI DB =====
-const mysql = require('mysql2');
 const connectionString = 'mysql://root:JSgGADhVzFuoKANTvBwTyrqUpXQSExmm@maglev.proxy.rlwy.net:39709/railway';
 
 const db = mysql.createConnection(connectionString);
