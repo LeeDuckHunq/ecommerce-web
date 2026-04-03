@@ -386,7 +386,7 @@
     return Number(n).toLocaleString('vi-VN');
   }
 
-  fetch('http://localhost:3000/products')
+  fetch('https://ecommerce-web-production-3aa3.up.railway.app/products')
     .then(res => res.json())
     .then(data => {
       let html = '';
@@ -415,7 +415,7 @@
     btn.disabled = true;
     btn.innerHTML = '<span style="opacity:.5">Đang thêm…</span>';
 
-    fetch('http://localhost:3000/cart', {
+    fetch('https://ecommerce-web-production-3aa3.up.railway.app/cart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: user.id, product_id: id })
