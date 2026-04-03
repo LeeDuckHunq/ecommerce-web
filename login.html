@@ -6,7 +6,6 @@
   <title>Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #f5f5f0;
@@ -115,6 +114,9 @@
     }
     .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
     .login-btn:active { transform: scale(0.98); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; filter: none; }
+
+    /* FIX 1: hidden by default, shown with .show */
     .error-msg {
       margin-top: 16px;
       padding: 11px 14px;
@@ -123,10 +125,27 @@
       border-radius: 10px;
       color: #c03030;
       font-size: 0.83rem;
-      display: flex; align-items: center; gap: 8px;
+      display: none;
+      align-items: center; gap: 8px;
+    }
+    .error-msg.show { display: flex; }
+
+    /* FIX 2: spinner CSS */
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .card { margin: 20px; padding: 36px 28px; }
     }
   </style>
-    
 </head>
 <body>
 
@@ -196,7 +215,6 @@
     document.getElementById('errorMsg').classList.remove('show');
   }
 
-  // Login on Enter key
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter') login();
   });
@@ -213,7 +231,6 @@
 
     setLoading(true);
 
-    // Đúng
     fetch('https://ecommerce-web-production-3aa3.up.railway.app/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
