@@ -413,7 +413,7 @@
     renderOrders(allOrders);
   }
 
-  fetch('http://localhost:3000/orders')
+  fetch('https://ecommerce-web-production-3aa3.up.railway.app/orders')
     .then(res => res.json())
     .then(data => {
       allOrders = data;
@@ -430,7 +430,7 @@
     const btns = row.querySelectorAll('.action-btn');
     btns.forEach(b => b.disabled = true);
 
-    fetch(`http://localhost:3000/orders/${id}`, {
+    fetch(`https://ecommerce-web-production-3aa3.up.railway.app/orders/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
