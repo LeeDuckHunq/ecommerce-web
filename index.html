@@ -189,9 +189,11 @@
       letter-spacing: 0.06em; text-transform: uppercase;
       color: var(--muted);
     }
-    .card-icon {
-      font-size: 2rem; line-height: 1;
-      margin: 6px 0 2px;
+    .card-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
     }
     .card-name {
       font-family: 'Syne', sans-serif;
@@ -366,14 +368,16 @@
 
     let html = '';
     products.forEach((p, i) => {
-      const icon = ICONS[allProducts.indexOf(p) % ICONS.length];
       const name = query
         ? p.name.replace(new RegExp(`(${query})`, 'gi'), '<mark>$1</mark>')
         : p.name;
+
       html += `
         <div class="card">
           <div class="card-tag">Sản phẩm</div>
-          <div class="card-icon">${icon}</div>
+          
+          <img src="${p.image}" alt="${p.name}" class="card-img">
+
           <div class="card-name">${name}</div>
           <div class="card-price">${formatPrice(p.price)}<span>VND</span></div>
           <button class="add-btn" id="btn-${p.id}" onclick="add(${p.id}, this)">
