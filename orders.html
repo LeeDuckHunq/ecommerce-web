@@ -35,41 +35,23 @@
     }
 
     header {
-      position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; height: 64px;
-      background: rgba(245,245,240,0.88);
-      backdrop-filter: blur(18px);
+      padding: 0 40px; height: 56px;
+      background: #ffffff;
       border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
     }
-
     .logo {
       font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em;
+      font-weight: 800; font-size: 1.1rem; letter-spacing: -0.04em;
       color: var(--text); text-decoration: none;
     }
     .logo span { color: var(--accent); }
-
-    .header-links { display: flex; gap: 10px; }
-
-    .nav-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 16px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.83rem; font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s;
+    .back-btn {
+      font-size: 0.8rem; color: var(--muted); text-decoration: none;
+      transition: color 0.15s;
     }
-    .nav-btn:hover { color: var(--text); border-color: rgba(0,0,0,0.18); }
-    .nav-btn.active {
-      background: var(--accent-dim);
-      border-color: rgba(74,74,240,0.25);
-      color: var(--accent);
-    }
+    .back-btn:hover { color: var(--text); }
 
     .page {
       max-width: 760px;
@@ -233,17 +215,16 @@
 
     @media (max-width: 600px) {
       header { padding: 0 20px; }
-      .page  { padding: 40px 20px 80px; }
-      .order-total { display: none; }
+      .page  { padding: 28px 20px 60px; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <a href="index.html" class="logo">M<span>.</span>Shop</a>
-    <a href="index.html" class="back-btn">← Back to Shop</a>
-  </header>
+<header>
+  <a href="index.html" class="logo">M<span>.</span>Shop</a>
+  <a href="index.html" class="back-btn">← Back to Shop</a>
+</header>
 
 <div class="page">
   <div class="hero-label">Purchase history</div>
