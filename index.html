@@ -339,13 +339,14 @@
 </head>
 <body>
 
-<header>
-  <div class="logo">M<span>.</span>Shop</div>
-  <div style="display: flex; gap: 20px;">
-    <a href="cart.html" class="cart-btn">🛒 Giỏ hàng</a>
-    <a href="orders.html" class="cart-btn">Orders</a>
-  </div>
-</header>
+  <header>
+    <div class="logo">M<span>.</span>Shop</div>
+    <div style="display: flex; gap: 20px;">
+      <a href="cart.html" class="cart-btn">🛒 Giỏ hàng</a>
+      <a href="orders.html" class="cart-btn">Orders</a>
+      <button onclick="logout()" class="cart-btn">Đăng xuất</button>
+    </div>
+  </header>
 
 <section class="hero">
   <div class="hero-label">Cửa hàng trực tuyến</div>
@@ -365,6 +366,10 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
+  function logout() {
+  localStorage.removeItem('user');
+  window.location = 'login.html';
+  }
   const ICONS = ['📦','🛍️','🎁','⭐','💎','🔥','✨','🎯'];
 
   const user = JSON.parse(localStorage.getItem('user'));
