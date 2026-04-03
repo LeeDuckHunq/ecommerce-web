@@ -344,7 +344,7 @@
 
   let cartItems = [];
 
-  fetch(`http://localhost:3000/cart/${user.id}`)
+  fetch(`https://ecommerce-web-production-3aa3.up.railway.app/cart/${user.id}`)
     .then(res => res.json())
     .then(data => {
       cartItems = data;
@@ -397,7 +397,7 @@
     spinner.style.display = 'block';
     text.textContent = 'Processing…';
 
-    fetch('http://localhost:3000/checkout', {
+    fetch('https://ecommerce-web-production-3aa3.up.railway.app/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: user.id })
