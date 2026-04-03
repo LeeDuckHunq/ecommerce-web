@@ -335,7 +335,7 @@
   }
 
   // GET /orders/user/:id  →  returns array of { id, user_id, status, total }
-  fetch(`http://localhost:3000/orders/user/${user.id}`)
+  fetch(`https://ecommerce-web-production-3aa3.up.railway.app/orders/user/${user.id}`)
     .then(res => res.json())
     .then(data => {
       allOrders = data;
