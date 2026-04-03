@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0f;
+      --surface: #18181b;
+      --surface2: #1f1f23;
+      --border: rgba(255,255,255,0.07);
+      --accent: #e8ff47;
+      --accent-dim: rgba(232,255,71,0.12);
+      --text: #f0f0ef;
+      --muted: #6b6b72;
+      --card-hover: #222228;
+      --red-dim: rgba(255,80,80,0.1);
+      --red: #ff7070;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.6;
+    }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: rgba(14,14,15,0.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em;
+      text-decoration: none; color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.83rem; font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+    /* Layout */
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 60px 40px 100px;
+    }
+
+    /* Hero */
+    .hero-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
+    .hero-label::before {
+      content: ''; display: block;
+      width: 20px; height: 1px; background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+      margin-bottom: 40px;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+
+    /* Cart items */
+    #cart { display: flex; flex-direction: column; gap: 12px; }
+
+    .item {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      animation: fadeUp 0.4s ease both;
+      transition: background 0.2s, border-color 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .item::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,255,71,0.2), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .item:hover { background: var(--card-hover); border-color: rgba(232,255,71,0.12); }
+    .item:hover::after { opacity: 1; }
+
+    .item-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .item-info { flex: 1; min-width: 0; }
+    .item-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 0.97rem;
+      letter-spacing: -0.02em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    .item-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--accent); letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .item-price small { font-family: 'DM Sans', sans-serif; font-size: 0.7rem; font-weight: 400; color: var(--muted); margin-left: 2px; }
+
+    /* Stagger */
+    .item:nth-child(1) { animation-delay: 0.05s; }
+    .item:nth-child(2) { animation-delay: 0.10s; }
+    .item:nth-child(3) { animation-delay: 0.15s; }
+    .item:nth-child(4) { animation-delay: 0.20s; }
+    .item:nth-child(5) { animation-delay: 0.25s; }
+
+    /* Summary */
+    .summary {
+      margin-top: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      animation: fadeUp 0.5s ease 0.2s both;
+    }
+
+    .summary-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+    }
+    .summary-row + .summary-row { border-top: 1px solid var(--border); }
+    .summary-label { color: var(--muted); font-size: 0.87rem; }
+    .summary-value { font-weight: 500; font-size: 0.87rem; }
+
+    .summary-total .summary-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem; color: var(--text);
+    }
+    .summary-total .summary-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--accent);
+    }
+
+    /* Checkout button */
+    .checkout-btn {
+      width: 100%; margin-top: 16px;
+      padding: 14px;
+      background: var(--accent);
+      border: none; border-radius: 12px;
+      color: #0e0e0f;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .checkout-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .checkout-btn:active { transform: scale(0.98); }
+    .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Spinner */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.25);
+      border-top-color: #0e0e0f;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      padding: 80px 20px;
+      animation: fadeUp 0.5s ease;
+    }
+    .empty-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .empty h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .empty p { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
+    .empty a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 22px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(232,255,71,0.25);
+      border-radius: 99px;
+      color: var(--accent);
+      font-size: 0.85rem; font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .empty a:hover { background: var(--accent); color: #0e0e0f; }
+
+    /* Skeleton */
+    .skeleton-item {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .skel {
+      background: linear-gradient(90deg, var(--surface2) 25%, #28282e 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite; border-radius: 6px;
+    }
+    .skel-icon { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; }
+    .skel-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skel-line { height: 12px; }
+
+    /* Toast */
+    .toast-wrap {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 8px; z-index: 999;
+    }
+    .toast {
+      background: var(--surface);
+      border: 1px solid rgba(232,255,71,0.25); border-radius: 12px;
+      padding: 12px 18px; font-size: 0.85rem;
+      display: flex; align-items: center; gap: 10px;
+      animation: toastIn 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .toast-icon { color: var(--accent); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 0 20px; }
+      .page  { padding: 40px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">M<span>.</span>Shop</a>
+  <a href="index.html" class="back-btn">← Back to Shop</a>
+</header>
+
+<div class="page">
+  <div class="hero-label">Your order</div>
+  <h1>Your<br><em>Cart</em></h1>
+
+  <div id="cart">
+    <!-- skeletons -->
+    <div class="skeleton-item">
+      <div class="skel skel-icon"></div>
+      <div class="skel-lines"><div class="skel skel-line" style="width:55%"></div><div class="skel skel-line" style="width:35%"></div></div>
+      <div class="skel skel-line" style="width:70px;height:14px"></div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skel skel-icon"></div>
+      <div class="skel-lines"><div class="skel skel-line" style="width:65%"></div><div class="skel skel-line" style="width:40%"></div></div>
+      <div class="skel skel-line" style="width:70px;height:14px"></div>
+    </div>
+  </div>
+
+  <div class="summary" id="summary" style="display:none">
+    <div class="summary-row">
+      <span class="summary-label">Items</span>
+      <span class="summary-value" id="itemCount">—</span>
+    </div>
+    <div class="summary-row summary-total">
+      <span class="summary-label">Total</span>
+      <span class="summary-value" id="totalPrice">—</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
+      <span class="spinner" id="spinner"></span>
+      <span id="btnText">Checkout →</span>
+    </button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+  const ICONS = ['📦','🛍️','🎁','⭐','💎','🔥','✨','🎯'];
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  if (!user) {
+    window.location = 'login.html';
+  }
+
+  function formatPrice(n) {
+    return Number(n).toLocaleString('en-US');
+  }
+
+  function showToast(msg) {
+    const wrap = document.getElementById('toastWrap');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<span class="toast-icon">✓</span>${msg}`;
+    wrap.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  let cartItems = [];
+
+  fetch(`http://localhost:3000/cart/${user.id}`)
+    .then(res => res.json())
+    .then(data => {
+      cartItems = data;
+      const cartEl = document.getElementById('cart');
+
+      if (!data.length) {
+        cartEl.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">🛒</div>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added anything yet.</p>
+            <a href="index.html">← Browse products</a>
+          </div>`;
+        return;
+      }
+
+      let html = '';
+      data.forEach((item, i) => {
+        const icon = ICONS[i % ICONS.length];
+        html += `
+          <div class="item">
+            <div class="item-icon">${icon}</div>
+            <div class="item-info">
+              <div class="item-name">${item.name}</div>
+              <div class="item-sub">Product</div>
+            </div>
+            <div class="item-price">${formatPrice(item.price)}<small>VND</small></div>
+          </div>
+        `;
+      });
+      cartEl.innerHTML = html;
+
+      // Summary
+      const total = data.reduce((s, i) => s + Number(i.price), 0);
+      document.getElementById('itemCount').textContent = `${data.length} item${data.length !== 1 ? 's' : ''}`;
+      document.getElementById('totalPrice').textContent = formatPrice(total) + ' VND';
+      document.getElementById('summary').style.display = 'block';
+    })
+    .catch(() => {
+      document.getElementById('cart').innerHTML =
+        '<p style="color:var(--muted);padding:20px 0;">Could not load cart.</p>';
+    });
+
+  function checkout() {
+    const btn = document.getElementById('checkoutBtn');
+    const spinner = document.getElementById('spinner');
+    const text = document.getElementById('btnText');
+
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    text.textContent = 'Processing…';
+
+    fetch('http://localhost:3000/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user.id })
+    })
+    .then(() => {
+      showToast('Payment successful! Thank you 🎉');
+      document.getElementById('cart').innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🎉</div>
+          <h3>Order placed!</h3>
+          <p>Your payment was successful. We'll get it ready soon.</p>
+          <a href="index.html">← Keep shopping</a>
+        </div>`;
+      document.getElementById('summary').style.display = 'none';
+    })
+    .catch(() => {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+      text.textContent = 'Checkout →';
+      showToast('⚠ Payment failed. Please try again.');
+    });
+  }
+</script>
+
+</body>
+</html>

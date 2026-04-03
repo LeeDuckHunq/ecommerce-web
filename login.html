@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0f;
+      --surface: #18181b;
+      --surface2: #1f1f23;
+      --border: rgba(255,255,255,0.07);
+      --border-focus: rgba(232,255,71,0.4);
+      --accent: #e8ff47;
+      --accent-dim: rgba(232,255,71,0.12);
+      --text: #f0f0ef;
+      --muted: #6b6b72;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Noise */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.6;
+    }
+
+    /* Glow blob */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .card {
+      position: relative; z-index: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    /* Top accent line */
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,255,71,0.4), transparent);
+      border-radius: 99px;
+    }
+
+    .brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.4rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 32px;
+    }
+    .brand span { color: var(--accent); }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.9rem; font-weight: 800;
+      letter-spacing: -0.04em; line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    h2 em { font-style: normal; color: var(--accent); }
+
+    .subtitle {
+      color: var(--muted); font-size: 0.88rem;
+      font-weight: 300; margin-bottom: 36px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+
+    label {
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex; align-items: center;
+    }
+
+    .input-icon {
+      position: absolute; left: 14px;
+      color: var(--muted); font-size: 1rem;
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.93rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    input::placeholder { color: var(--muted); }
+    input:focus {
+      border-color: var(--border-focus);
+      background: #222228;
+    }
+
+    .toggle-pw {
+      position: absolute; right: 14px;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-size: 0.8rem; font-family: 'DM Sans', sans-serif;
+      transition: color 0.2s;
+      padding: 0;
+    }
+    .toggle-pw:hover { color: var(--text); }
+
+    .login-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px;
+      background: var(--accent);
+      border: none; border-radius: 10px;
+      color: #0e0e0f;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .login-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .login-btn:active { transform: scale(0.98); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .error-msg {
+      margin-top: 16px;
+      padding: 11px 14px;
+      background: rgba(255, 80, 80, 0.1);
+      border: 1px solid rgba(255, 80, 80, 0.2);
+      border-radius: 10px;
+      color: #ff7070;
+      font-size: 0.83rem;
+      display: none;
+      align-items: center; gap: 8px;
+      animation: fadeUp 0.3s ease;
+    }
+    .error-msg.show { display: flex; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #0e0e0f;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .card { margin: 20px; padding: 36px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">M<span>.</span>Shop</div>
+
+  <h2>Welcome<br><em>back</em></h2>
+  <p class="subtitle">Sign in to continue shopping.</p>
+
+  <div class="field">
+    <label for="username">Username</label>
+    <div class="input-wrap">
+      <span class="input-icon">👤</span>
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username"/>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="password">Password</label>
+    <div class="input-wrap">
+      <span class="input-icon">🔒</span>
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+      <button class="toggle-pw" type="button" onclick="togglePw(this)">Show</button>
+    </div>
+  </div>
+
+  <button class="login-btn" id="loginBtn" onclick="login()">
+    <span class="spinner" id="spinner"></span>
+    <span id="btnText">Sign In →</span>
+  </button>
+
+  <div class="error-msg" id="errorMsg">
+    <span>⚠</span>
+    <span id="errorText">Incorrect username or password.</span>
+  </div>
+</div>
+
+<script>
+  function togglePw(btn) {
+    const input = document.getElementById('password');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    btn.textContent = isHidden ? 'Hide' : 'Show';
+  }
+
+  function setLoading(on) {
+    const btn = document.getElementById('loginBtn');
+    const spinner = document.getElementById('spinner');
+    const text = document.getElementById('btnText');
+    btn.disabled = on;
+    spinner.style.display = on ? 'block' : 'none';
+    text.textContent = on ? 'Signing in…' : 'Sign In →';
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('errorMsg');
+    document.getElementById('errorText').textContent = msg;
+    box.classList.add('show');
+  }
+
+  function hideError() {
+    document.getElementById('errorMsg').classList.remove('show');
+  }
+
+  // Login on Enter key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  function login() {
+    hideError();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!username || !password) {
+      showError('Please fill in both fields.');
+      return;
+    }
+
+    setLoading(true);
+
+    fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data) {
+        localStorage.setItem('user', JSON.stringify(data));
+        window.location = data.role === 'admin' ? 'admin.html' : 'index.html';
+      } else {
+        setLoading(false);
+        showError('Incorrect username or password.');
+      }
+    })
+    .catch(() => {
+      setLoading(false);
+      showError('Could not connect to server. Please try again.');
+    });
+  }
+</script>
+
+</body>
+</html>

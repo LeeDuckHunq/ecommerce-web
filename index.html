@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0f;
+      --surface: #18181b;
+      --surface2: #1f1f23;
+      --border: rgba(255,255,255,0.07);
+      --accent: #e8ff47;
+      --accent-dim: rgba(232,255,71,0.12);
+      --text: #f0f0ef;
+      --muted: #6b6b72;
+      --card-hover: #222228;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(14,14,15,0.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .logo span { color: var(--accent); }
+
+    .cart-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(232,255,71,0.25);
+      border-radius: 99px;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .cart-btn:hover {
+      background: var(--accent);
+      color: #0e0e0f;
+      border-color: var(--accent);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 72px 40px 48px;
+      position: relative;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .hero-label::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+
+    /* Grid */
+    .grid-wrap {
+      padding: 0 40px 80px;
+    }
+
+    #list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    /* Product Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+      animation: fadeUp 0.5s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,255,71,0.3), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover {
+      background: var(--card-hover);
+      border-color: rgba(232,255,71,0.18);
+      transform: translateY(-3px);
+    }
+
+    .card:hover::after { opacity: 1; }
+
+    .card-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--surface2);
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .card-price {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+    }
+
+    .card-price span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 2px;
+    }
+
+    .add-btn {
+      margin-top: auto;
+      width: 100%;
+      padding: 11px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .add-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0e0e0f;
+    }
+
+    .add-btn:active { transform: scale(0.97); }
+
+    .add-btn.added {
+      background: rgba(232,255,71,0.15);
+      border-color: rgba(232,255,71,0.3);
+      color: var(--accent);
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .skel {
+      background: linear-gradient(90deg, var(--surface2) 25%, #28282e 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+
+    .skel-icon { width: 48px; height: 48px; border-radius: 12px; }
+    .skel-line { height: 14px; }
+    .skel-btn { height: 40px; border-radius: 10px; margin-top: 8px; }
+
+    /* Toast */
+    .toast-wrap {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 999;
+    }
+
+    .toast {
+      background: var(--surface);
+      border: 1px solid rgba(232,255,71,0.25);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 0.85rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .toast-icon { color: var(--accent); font-size: 1rem; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      to { background-position: -200% 0; }
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Stagger cards */
+    .card:nth-child(1)  { animation-delay: 0.05s; }
+    .card:nth-child(2)  { animation-delay: 0.10s; }
+    .card:nth-child(3)  { animation-delay: 0.15s; }
+    .card:nth-child(4)  { animation-delay: 0.20s; }
+    .card:nth-child(5)  { animation-delay: 0.25s; }
+    .card:nth-child(6)  { animation-delay: 0.30s; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header { padding: 0 20px; }
+      .hero  { padding: 48px 20px 32px; }
+      .grid-wrap { padding: 0 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">M<span>.</span>Shop</div>
+  <div style="display: flex; gap: 20px;">
+    <a href="cart.html" class="cart-btn">🛒 Giỏ hàng</a>
+    <a href="orders.html" class="cart-btn">Orders</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-label">Cửa hàng trực tuyến</div>
+  <h1>Mua sắm<br><em>dễ dàng</em></h1>
+  <p class="hero-sub">Khám phá các sản phẩm chất lượng với giá tốt nhất.</p>
+</section>
+
+<div class="grid-wrap">
+  <div id="list">
+    <!-- skeletons while loading -->
+    <div class="skeleton"><div class="skel skel-icon"></div><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line" style="width:40%"></div><div class="skel skel-btn"></div></div>
+    <div class="skeleton"><div class="skel skel-icon"></div><div class="skel skel-line" style="width:70%"></div><div class="skel skel-line" style="width:35%"></div><div class="skel skel-btn"></div></div>
+    <div class="skeleton"><div class="skel skel-icon"></div><div class="skel skel-line" style="width:55%"></div><div class="skel skel-line" style="width:45%"></div><div class="skel skel-btn"></div></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+  const ICONS = ['📦','🛍️','🎁','⭐','💎','🔥','✨','🎯'];
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) {
+    alert("Bạn chưa đăng nhập!");
+    window.location = "login.html";
+  }
+
+  function showToast(msg) {
+    const wrap = document.getElementById('toastWrap');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<span class="toast-icon">✓</span>${msg}`;
+    wrap.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  function formatPrice(n) {
+    return Number(n).toLocaleString('vi-VN');
+  }
+
+  fetch('http://localhost:3000/products')
+    .then(res => res.json())
+    .then(data => {
+      let html = '';
+      data.forEach((p, i) => {
+        const icon = ICONS[i % ICONS.length];
+        html += `
+          <div class="card">
+            <div class="card-tag">Sản phẩm</div>
+            <div class="card-icon">${icon}</div>
+            <div class="card-name">${p.name}</div>
+            <div class="card-price">${formatPrice(p.price)}<span>VND</span></div>
+            <button class="add-btn" id="btn-${p.id}" onclick="add(${p.id}, this)">
+              <span>＋</span> Thêm vào giỏ
+            </button>
+          </div>
+        `;
+      });
+      document.getElementById('list').innerHTML = html;
+    })
+    .catch(() => {
+      document.getElementById('list').innerHTML =
+        '<p style="color:var(--muted);padding:20px;">Không thể tải sản phẩm.</p>';
+    });
+
+  function add(id, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span style="opacity:.5">Đang thêm…</span>';
+
+    fetch('http://localhost:3000/cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user.id, product_id: id })
+    })
+    .then(() => {
+      btn.className = 'add-btn added';
+      btn.innerHTML = '✓ Đã thêm';
+      showToast('Đã thêm sản phẩm vào giỏ hàng!');
+      setTimeout(() => {
+        btn.className = 'add-btn';
+        btn.innerHTML = '<span>＋</span> Thêm vào giỏ';
+        btn.disabled = false;
+      }, 2500);
+    })
+    .catch(() => {
+      btn.innerHTML = '⚠ Lỗi, thử lại';
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>

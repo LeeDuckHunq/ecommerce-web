@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0f;
+      --surface: #18181b;
+      --surface2: #1f1f23;
+      --border: rgba(255,255,255,0.07);
+      --accent: #e8ff47;
+      --accent-dim: rgba(232,255,71,0.12);
+      --text: #f0f0ef;
+      --muted: #6b6b72;
+      --card-hover: #222228;
+      --green: #4ade80;
+      --green-dim: rgba(74,222,128,0.12);
+      --red: #ff7070;
+      --red-dim: rgba(255,112,112,0.12);
+      --yellow: #fbbf24;
+      --yellow-dim: rgba(251,191,36,0.12);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.6;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: rgba(14,14,15,0.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em;
+      color: var(--text); text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+
+    .header-links { display: flex; gap: 10px; }
+
+    .nav-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.83rem; font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .nav-btn.active {
+      background: var(--accent-dim);
+      border-color: rgba(232,255,71,0.25);
+      color: var(--accent);
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 40px 100px;
+    }
+
+    .hero-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
+    .hero-label::before {
+      content: ''; display: block;
+      width: 20px; height: 1px; background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+      margin-bottom: 10px;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+    .page-sub { color: var(--muted); font-size: 0.88rem; font-weight: 300; margin-bottom: 36px; }
+
+    /* Filters */
+    .filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+
+    .filter-btn {
+      padding: 7px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .filter-btn.active {
+      background: var(--accent-dim);
+      border-color: rgba(232,255,71,0.3);
+      color: var(--accent);
+    }
+
+    /* Order rows */
+    #orders { display: flex; flex-direction: column; gap: 10px; }
+
+    .order-row {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      animation: fadeUp 0.45s ease both;
+      transition: background 0.2s, border-color 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .order-row::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,255,71,0.2), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .order-row:hover { background: var(--card-hover); border-color: rgba(232,255,71,0.12); }
+    .order-row:hover::after { opacity: 1; }
+
+    .order-row:nth-child(1) { animation-delay: 0.05s; }
+    .order-row:nth-child(2) { animation-delay: 0.10s; }
+    .order-row:nth-child(3) { animation-delay: 0.15s; }
+    .order-row:nth-child(4) { animation-delay: 0.20s; }
+    .order-row:nth-child(5) { animation-delay: 0.25s; }
+
+    /* Left accent bar per status */
+    .order-row.pending  { border-left: 3px solid var(--yellow); }
+    .order-row.approved { border-left: 3px solid var(--green); }
+    .order-row.rejected { border-left: 3px solid var(--red); }
+
+    .order-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border-radius: 10px; background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .order-icon.pending  { background: var(--yellow-dim); }
+    .order-icon.approved { background: var(--green-dim); }
+    .order-icon.rejected { background: var(--red-dim); }
+
+    .order-info { flex: 1; min-width: 0; }
+
+    .order-id-line {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.97rem; font-weight: 700; letter-spacing: -0.02em;
+    }
+
+    .order-note {
+      font-size: 0.77rem; color: var(--muted); margin-top: 3px;
+    }
+    .order-note.pending  { color: var(--yellow); }
+    .order-note.approved { color: var(--green); }
+    .order-note.rejected { color: var(--red); }
+
+    .order-total {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 800;
+      color: var(--accent); letter-spacing: -0.03em;
+      white-space: nowrap; text-align: right;
+    }
+    .order-total small {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem; font-weight: 400;
+      color: var(--muted); margin-left: 2px;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .status-badge.pending  { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
+    .status-badge.approved { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(74,222,128,0.2); }
+    .status-badge.rejected { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,112,112,0.2); }
+
+    /* Skeletons */
+    .skel-row {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 22px;
+    }
+    .skel {
+      background: linear-gradient(90deg, var(--surface2) 25%, #28282e 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite; border-radius: 6px;
+    }
+    .skel-icon-box { width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0; }
+    .skel-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skel-line { height: 12px; }
+    .skel-pill { width: 72px; height: 24px; border-radius: 99px; }
+    .skel-num  { width: 70px; height: 18px; }
+
+    /* Empty */
+    .empty { text-align: center; padding: 80px 20px; animation: fadeUp 0.5s ease; }
+    .empty-icon { font-size: 3rem; margin-bottom: 14px; }
+    .empty h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .empty p { color: var(--muted); font-size: 0.87rem; margin-bottom: 24px; }
+    .empty a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 22px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(232,255,71,0.25);
+      border-radius: 99px; color: var(--accent);
+      font-size: 0.85rem; font-weight: 500;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .empty a:hover { background: var(--accent); color: #0e0e0f; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    @media (max-width: 600px) {
+      header { padding: 0 20px; }
+      .page  { padding: 40px 20px 80px; }
+      .order-total { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">M<span>.</span>Shop</a>
+  <div class="header-links">
+    <a href="index.html" class="nav-btn">🛍 Shop</a>
+    <a href="cart.html" class="nav-btn">🛒 Cart</a>
+    <a href="orders.html" class="nav-btn active">📋 Orders</a>
+  </div>
+</header>
+
+<div class="page">
+  <div class="hero-label">Purchase history</div>
+  <h1>My<br><em>Orders</em></h1>
+  <p class="page-sub">Track the status of all your orders.</p>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+    <button class="filter-btn" onclick="setFilter('pending', this)">⏳ Pending</button>
+    <button class="filter-btn" onclick="setFilter('approved', this)">✓ Approved</button>
+    <button class="filter-btn" onclick="setFilter('rejected', this)">✕ Rejected</button>
+  </div>
+
+  <div id="orders">
+    <div class="skel-row"><div class="skel skel-icon-box"></div><div class="skel-lines"><div class="skel skel-line" style="width:45%"></div><div class="skel skel-line" style="width:30%"></div></div><div class="skel skel-pill"></div><div class="skel skel-num"></div></div>
+    <div class="skel-row"><div class="skel skel-icon-box"></div><div class="skel-lines"><div class="skel skel-line" style="width:55%"></div><div class="skel skel-line" style="width:25%"></div></div><div class="skel skel-pill"></div><div class="skel skel-num"></div></div>
+    <div class="skel-row"><div class="skel skel-icon-box"></div><div class="skel-lines"><div class="skel skel-line" style="width:40%"></div><div class="skel skel-line" style="width:35%"></div></div><div class="skel skel-pill"></div><div class="skel skel-num"></div></div>
+  </div>
+</div>
+
+<script>
+  const STATUS_CONFIG = {
+    pending:  { icon: '⏳', note: 'Waiting for approval' },
+    approved: { icon: '✓',  note: 'Order approved!' },
+    rejected: { icon: '✕',  note: 'Order was rejected.' },
+  };
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) window.location = 'login.html';
+
+  let allOrders = [];
+  let activeFilter = 'all';
+
+  function formatPrice(n) {
+    return Number(n).toLocaleString('en-US');
+  }
+
+  function setFilter(f, btn) {
+    activeFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderOrders(allOrders);
+  }
+
+  function renderOrders(orders) {
+    const el = document.getElementById('orders');
+    const list = activeFilter === 'all' ? orders : orders.filter(o => o.status === activeFilter);
+
+    if (!list.length) {
+      el.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">${activeFilter === 'all' ? '📋' : '🔍'}</div>
+          <h3>${activeFilter === 'all' ? 'No orders yet' : 'No ' + activeFilter + ' orders'}</h3>
+          <p>${activeFilter === 'all' ? "You haven't placed any orders." : 'Nothing here for this filter.'}</p>
+          ${activeFilter === 'all' ? '<a href="index.html">← Start shopping</a>' : ''}
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = list.map(o => {
+      const cfg = STATUS_CONFIG[o.status] || { icon: '?', note: o.status };
+      return `
+        <div class="order-row ${o.status}">
+          <div class="order-icon ${o.status}">${cfg.icon}</div>
+          <div class="order-info">
+            <div class="order-id-line">Order #${String(o.id).padStart(3, '0')}</div>
+            <div class="order-note ${o.status}">${cfg.note}</div>
+          </div>
+          <div class="status-badge ${o.status}">${o.status}</div>
+          <div class="order-total">${formatPrice(o.total)}<small>VND</small></div>
+        </div>`;
+    }).join('');
+  }
+
+  // GET /orders/user/:id  →  returns array of { id, user_id, status, total }
+  fetch(`http://localhost:3000/orders/user/${user.id}`)
+    .then(res => res.json())
+    .then(data => {
+      allOrders = data;
+      renderOrders(data);
+    })
+    .catch(() => {
+      document.getElementById('orders').innerHTML =
+        '<p style="color:var(--muted);padding:20px 0;">Could not load orders.</p>';
+    });
+</script>
+
+</body>
+</html>
